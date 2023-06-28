@@ -33,7 +33,7 @@ const UserProfile = () => {
         <div className="right">
           {activepage === "accountsettings" && <AccountSettings />}
           {activepage === "changepassword" && <ChangePassword />}
-          {activepage === "yourorders" && <YourOrders />}
+          {/* {activepage === "yourorders" && <YourOrders />} */}
           {activepage === "address" && <UserAddress />}
           {activepage === "legalnotice" && <LegalNotice />}
         </div>

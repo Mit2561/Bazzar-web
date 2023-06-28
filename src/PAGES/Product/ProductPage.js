@@ -109,6 +109,7 @@ const ProductPage = () => {
   };
   const goToBuyPage = () => {
     console.log("done");
+    // navigate(``)
   };
   return (
     <div className="productpage">
@@ -163,7 +164,7 @@ const ProductPage = () => {
               })}
           </div>
           <div className="imgbig">
-            {console.log(activeimg)}
+            {/* {console.log(activeimg)} */}
             <img
               src={`https://res.cloudinary.com/dqzedyrjd/image/upload/${activeimg.image}.jpg`}
               alt=""

@@ -3,10 +3,6 @@ import SingleBanner from "../../COMPONENTS/Banners/SingleBanner";
 import Footer1 from "../../COMPONENTS/Footer/Footer1";
 import Footer2 from "../../COMPONENTS/Footer/Footer";
 import Navbar from "../../COMPONENTS/Navbar/Navbar";
-import img1 from "../../ASSETS/Images/1.png";
-import img2 from "../../ASSETS/Images/2.png";
-import img3 from "../../ASSETS/Images/3.png";
-
 import poster from "../../ASSETS/poster.jpg";
 import "./BuyPage.css";
 import "./Progress.css";
@@ -21,8 +17,10 @@ import { useParams } from "react-router-dom";
 const BuyPage = () => {
   const params = useParams();
   const prodid = params.prodid;
+  // let products = [];
+  const [quantity,setQuantity] = useState(parseInt(params.quantity))
+  const [product, setProduct] = useState();
   const [buyQuantity, setBuyQuantity] = useState(parseInt(params.quantity));
-  const [cartdata, setcartdata] = useState([]);
   const [subtotal, setsubtotal] = useState(0);
   const [shipping, setshipping] = useState(0);
   const [active, setactive] = useState(1);
@@ -32,256 +30,45 @@ const BuyPage = () => {
       .toISOString()
       .split("T")[0]
   );
-
-  const products = [
-    {
-      ProductId: 1,
-      ProductName: "iPhone 9",
-      ProductDescription: "An apple mobile which is nothing like apple",
-      ProductImage: [
-        {
-          public_id: 1,
-          secure_url: "https://i.dummyjson.com/data/products/1/1.jpg",
+  const [savedaddress,setSavedaddress] = useState([]);
+  const [street1, setStreet1] = useState();
+  const [street2, setStreet2] = useState();
+  const [city, setCity] = useState();
+  const [zip, setZip] = useState();
+  const [orderAddressId,setOrderAddressId] = useState(-1);
+  
+  const fetchProduct = async () => {
+    try {
+      const response = await fetch(`/api/product/${prodid}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          client_id: 1,
         },
-        {
-          public_id: 2,
-          secure_url: "https://i.dummyjson.com/data/products/1/2.jpg",
-        },
-        {
-          public_id: 3,
-          secure_url: "https://i.dummyjson.com/data/products/1/3.jpg",
-        },
-      ],
-      ProductCategotyId: 1,
-      ProductCategory: "Category 1",
-      ProductSubCategory: "Sub Category 1",
-      ProductBrand: "Brand 1",
-      ProductColor: "Color 1",
-      ProductSize: "Size 1",
-      ProductWeight: "Weight 1",
-      ProductMaterial: "Material 1",
-      ProductQuantity: 10,
-      ProductUnit: "Unit 1",
-      ProductPrice: 100,
-      SalesPrice: 90,
-      ProductDiscount: 10,
-      ProductDiscountType: "Percentage",
-      ProductTax: 20,
-      ProductTaxType: "Percentage",
-      ProductShippingCharge: 20,
-      ProductShippingChargeType: "Percentage",
-      ProductShippingTime: "1-2 days",
-      ProductShippingTimeType: "Days",
-      ProductShippingLocation: "Location 1",
-      ProductShippingLocationType: "Country",
-      ProductShippingReturnPolicy: "Return Policy 1",
-      ProductShippingReturnPolicyType: "Days",
-      ProductShippingReturnPolicyDescription: "Return Policy Description 1",
-      ProductShippingReturnPolicyDescriptionType: "Days",
-      ProductReviews: [
-        {
-          ReviewId: 1,
-          Name: "Harshal Jain",
-          Email: "",
-          Rating: 5,
-          Date: "2021-08-01",
-          Review:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-        {
-          ReviewId: 2,
-          Name: "Viraj",
-          Email: "",
-          Rating: 1,
-          Date: "2021-08-01",
-          Review:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-        },
-        {
-          ReviewId: 3,
-          Name: "Harshal Jain",
-          Email: "",
-          Rating: 4,
-          Date: "2021-08-01",
-          Review:
-            "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-      ],
-    },
-    {
-      ProductId: 2,
-      ProductName: "Product 2",
-      ProductDescription:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-      ProductImage: [
-        {
-          public_id: 1,
-          secure_url: img2,
-        },
-        {
-          public_id: 2,
-          secure_url: img1,
-        },
-        {
-          public_id: 3,
-          secure_url: img3,
-        },
-      ],
-      ProductCategotyId: 1,
-      ProductCategory: "Category 1",
-      ProductSubCategory: "Sub Category 1",
-      ProductBrand: "Brand 1",
-      ProductColor: "Color 1",
-      ProductSize: "Size 1",
-      ProductWeight: "Weight 1",
-      ProductMaterial: "Material 1",
-      ProductQuantity: 10,
-      ProductUnit: "Unit 1",
-      ProductPrice: 100,
-      SalesPrice: 90,
-      ProductDiscount: 10,
-      ProductDiscountType: "Percentage",
-      ProductTax: 20,
-      ProductTaxType: "Percentage",
-      ProductShippingCharge: 20,
-      ProductShippingChargeType: "Percentage",
-      ProductShippingTime: "1-2 days",
-      ProductShippingTimeType: "Days",
-      ProductShippingLocation: "Location 1",
-      ProductShippingLocationType: "Country",
-      ProductShippingReturnPolicy: "Return Policy 1",
-      ProductShippingReturnPolicyType: "Days",
-      ProductShippingReturnPolicyDescription: "Return Policy Description 1",
-      ProductShippingReturnPolicyDescriptionType: "Days",
-      ProductReviews: [
-        {
-          ReviewId: 1,
-          Name: "Harshal Jain",
-          Email: "",
-          Rating: 5,
-          Date: "2021-08-01",
-          Review:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-        {
-          ReviewId: 2,
-          Name: "Viraj",
-          Email: "",
-          Rating: 1,
-          Date: "2021-08-01",
-          Review:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-        },
-        {
-          ReviewId: 3,
-          Name: "Harshal Jain",
-          Email: "",
-          Rating: 4,
-          Date: "2021-08-01",
-          Review:
-            "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-      ],
-    },
-    {
-      ProductId: 3,
-      ProductName: "Product 3",
-      ProductDescription:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-      ProductImage: [
-        {
-          public_id: 1,
-          secure_url: img2,
-        },
-        {
-          public_id: 2,
-          secure_url: img1,
-        },
-        {
-          public_id: 3,
-          secure_url: img3,
-        },
-      ],
-      ProductCategotyId: 1,
-      ProductCategory: "Category 1",
-      ProductSubCategory: "Sub Category 1",
-      ProductBrand: "Brand 1",
-      ProductColor: "Color 1",
-      ProductSize: "Size 1",
-      ProductWeight: "Weight 1",
-      ProductMaterial: "Material 1",
-      ProductQuantity: 10,
-      ProductUnit: "Unit 1",
-      ProductPrice: 100,
-      SalesPrice: 70,
-      ProductDiscount: 30,
-      ProductDiscountType: "Percentage",
-      ProductTax: 20,
-      ProductTaxType: "Percentage",
-      ProductShippingCharge: 20,
-      ProductShippingChargeType: "Percentage",
-      ProductShippingTime: "1-2 days",
-      ProductShippingTimeType: "Days",
-      ProductShippingLocation: "Location 1",
-      ProductShippingLocationType: "Country",
-      ProductShippingReturnPolicy: "Return Policy 1",
-      ProductShippingReturnPolicyType: "Days",
-      ProductShippingReturnPolicyDescription: "Return Policy Description 1",
-      ProductShippingReturnPolicyDescriptionType: "Days",
-      ProductReviews: [
-        {
-          ReviewId: 1,
-          Name: "Harshal Jain",
-          Email: "",
-          Rating: 5,
-          Date: "2021-08-01",
-          Review:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-        {
-          ReviewId: 2,
-          Name: "Viraj",
-          Email: "",
-          Rating: 1,
-          Date: "2021-08-01",
-          Review:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-        },
-        {
-          ReviewId: 3,
-          Name: "Harshal Jain",
-          Email: "",
-          Rating: 4,
-          Date: "2021-08-01",
-          Review:
-            "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-      ],
-    },
-  ];
-  const getproductdatabyid = async (prodid) => {
-    console.log(prodid);
-    let temp = products.filter((product) => {
-      return product.ProductId == prodid;
-    });
-    console.log(temp);
-    setcartdata(temp);
-    let tempsubtotal = temp[0].SalesPrice * buyQuantity;
-    console.log(cartdata);
-    // console.log(tempsubtotal)
-    setsubtotal(tempsubtotal);
-    setshipping(80);
-    settax(tempsubtotal * 0.18 + 80 * 0.1);
-    setreloadnavbar(!reloadnavbar);
+      });
+      const data = await response.json();
+      console.log(data.product);
+      setProduct(data.product);
+      console.log(product);
+      let tempsubtotal = 0;
+      if (product !== undefined) {
+        tempsubtotal = product.price * buyQuantity;
+      }
+      // console.log(tempsubtotal)
+      setsubtotal(tempsubtotal);
+      setshipping(40);
+      settax(tempsubtotal * 0.18 + 80 * 0.1);
+    } catch (error) {
+      console.log("error while fetching data:", error);
+    }
   };
 
+  // {active==1 && fetchProduct()}
   useEffect(() => {
-    getproductdatabyid(prodid);
+    fetchProduct();
     window.scroll(0, 0);
   }, []);
-  useEffect(() => {
-    // setsubtotal(buyQuantity*cartdata.SalesPrice);
-  }, [buyQuantity]);
 
   const checklogin = () => {
     return true;
@@ -289,25 +76,119 @@ const BuyPage = () => {
 
   const [reloadnavbar, setreloadnavbar] = useState(false);
 
-  const savedaddress = [
-    {
-      AddressLine1: "Address Line 1",
-      AddressLine2: "Address Line 2",
-      AddressLine3: "Address Line 3",
-      postalcode: "123456",
-    },
-    {
-      AddressLine1: "Address Line 1",
-      AddressLine2: "Address Line 2",
-      AddressLine3: "Address Line 3",
-      postalcode: "123456",
-    },
-  ];
+  const getSavedAddress = () => {
+    console.log("called address");
+    fetchSavedAddress();
+  } 
+  
+  const fetchSavedAddress = async() =>{
+    try {
+      const response = await fetch(`/api/address`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          client_id: 1,
+        },
+      });
+      const data = await response.json();
+      console.log(data);
+      setSavedaddress(data.address);
+      if(data.success===true){
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
+  const postAddress = async (street1,street2,city,zip) => {
+    try {
+      const response = await fetch("/api/address/new", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          client_id: 1,
+        },
+        body: JSON.stringify({
+          street1: street1,
+          street2: street2,
+          city: city,
+          zipcode: zip,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("failed to upload your Address");
+      }
+      const data = await response.json();
+      console.log(data);
+      console.log("Address uploaded:", data.success);
+      if (data.success === true) {
+        // let currentAddress = savedaddress;
+        // currentAddress.push()
+      }
+    } catch (error) {
+      console.error("Error upload address:", error);
+    }
+  };
+  const saveAddress = () => {
+    postAddress(street1,street2,city,zip);
+  };
   const [selectedorderid, setselectedorderid] = useState(0);
   const [ordersuccesscont, setordersuccesscont] = useRecoilState(
     orderSuccessfulProvider
   );
+  
+  const checkAddressSelected = ()=>{
+    if(orderAddressId===-1){
+      alert("Please Select Deliver address");
+      setactive(2);
+    }
+    else{
+      setactive(3);
+    }
+  }
+
+  // const addressId = 1;
+  const postOrder = async() => {
+    let orderProducts = {};
+    orderProducts[product.product_id]=quantity;
+    try {
+      const response = await fetch("/api/order/new", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          client_id: 1,
+        },
+        body: JSON.stringify({
+          address_id:orderAddressId,
+          shipping_price:shipping,
+          orderProducts:orderProducts
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("failed to upload Order data");
+      }
+      const data = await response.json();
+      console.log("Data uploaded:", data.success);
+      if (data.success === true) {
+        setactive(4);
+      }
+      else{
+        alert("Error while Ordering please retry..");
+      }
+    } catch (error) {
+      alert("Error while Ordering please retry..");
+      console.error("Error, while ordering:", error);
+    }
+  }
+  const sendOrder = () => {
+    postOrder();
+    console.log("order Successfull");
+  }
+
   return (
     <div>
       <Navbar reloadnavbar={reloadnavbar} />
@@ -318,17 +199,14 @@ const BuyPage = () => {
           redirecto="userorders"
         />
       )}
-      <SingleBanner
-        heading="Happy Buying"
-        bannerimage={poster}
-      />
+      <SingleBanner heading="Happy Buying" bannerimage={poster} />
       <div className="cart">
         <div className="progress">
           {active == 1 ? (
             <div
               className="c11"
               onClick={() => {
-                cartdata.length > 0 && checklogin() && setactive(1);
+                product !== undefined && checklogin() && setactive(1);
               }}
             >
               <svg
@@ -351,7 +229,7 @@ const BuyPage = () => {
             <div
               className="c1"
               onClick={() => {
-                cartdata.length > 0 && checklogin() && setactive(1);
+                product !== undefined && checklogin() && setactive(1);
               }}
             >
               <svg
@@ -376,7 +254,7 @@ const BuyPage = () => {
             <div
               className="c11"
               onClick={() => {
-                cartdata.length > 0 && checklogin() && setactive(2);
+                product !== undefined && checklogin() && setactive(2);
               }}
             >
               <svg
@@ -405,7 +283,7 @@ const BuyPage = () => {
             <div
               className="c1"
               onClick={() => {
-                cartdata.length > 0 && checklogin() && setactive(2);
+                product !== undefined && checklogin() && setactive(2);
               }}
             >
               <svg
@@ -436,7 +314,7 @@ const BuyPage = () => {
             <div
               className="c11"
               onClick={() => {
-                cartdata.length > 0 && checklogin() && setactive(3);
+                product !== undefined && checklogin() && setactive(3);
               }}
             >
               <svg
@@ -460,7 +338,7 @@ const BuyPage = () => {
             <div
               className="c1"
               onClick={() => {
-                cartdata.length > 0 && checklogin() && setactive(3);
+                product !== undefined && checklogin() && setactive(3);
               }}
             >
               <svg
@@ -485,7 +363,7 @@ const BuyPage = () => {
             <div
               className="c11"
               onClick={() => {
-                cartdata.length > 0 && checklogin() && setactive(4);
+                product !== undefined && checklogin() && setactive(4);
               }}
             >
               <svg
@@ -509,7 +387,7 @@ const BuyPage = () => {
             <div
               className="c1"
               onClick={() => {
-                cartdata.length > 0 && checklogin() && setactive(4);
+                product !== undefined && checklogin() && setactive(4);
               }}
             >
               <svg
@@ -534,8 +412,8 @@ const BuyPage = () => {
 
         {active == 1 && (
           <div className="cartcont">
-            {/* <p>Cart cont</p> */}
-            {cartdata.length > 0 ? (
+            {/* <p>{product.name}</p> */}
+            {product !== undefined ? (
               <table className="carttable">
                 <thead>
                   <tr>
@@ -547,62 +425,59 @@ const BuyPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {cartdata.map((item, index) => {
-                    return (
-                      <tr key={index} className="cartitemrow">
-                        <td data-label="Product">
-                          <div
-                            className="cartproduct"
-                            onClick={() => {
-                              window.location.href = `/product/${item.ProductId}`;
-                            }}
-                          >
-                            <img
-                              src={item.ProductImage[0].secure_url}
-                              alt={item.ProductName}
-                            />
-                            <p>{item.ProductName}</p>
-                          </div>
-                        </td>
+                  {/* {cartdata.map((item, index) => {
+                    return ( */}
+                  <tr key={1} className="cartitemrow">
+                    <td data-label="Product">
+                      <div
+                        className="cartproduct"
+                        onClick={() => {
+                          window.location.href = `/product/${product.ProductId}`;
+                        }}
+                      >
+                        <img
+                          src={`https://res.cloudinary.com/dqzedyrjd/image/upload/${product.images}.jpg`}
+                          alt={product.product_name}
+                        />
+                        <p>{product.ProductName}</p>
+                      </div>
+                    </td>
 
-                        <td data-label="Quantity">
-                          <div className="quantity">
-                            <button
-                              className="minus"
-                              onClick={() => {
-                                // let newcartdata = [...cartdata]
+                    <td data-label="Quantity">
+                      <div className="quantity">
+                        <button
+                          className="minus"
+                          onClick={() => {
+                            // let newcartdata = [...cartdata]
 
-                                if (buyQuantity > 1) {
-                                  setBuyQuantity(buyQuantity - 1);
-                                }
-                              }}
-                            >
-                              -
-                            </button>
-                            <span>{buyQuantity}</span>
-                            <button
-                              className="plus"
-                              onClick={() => {
-                                setBuyQuantity(buyQuantity + 1);
-                              }}
-                            >
-                              +
-                            </button>
-                          </div>
-                        </td>
+                            if (buyQuantity > 1) {
+                              setBuyQuantity(buyQuantity - 1);
+                            }
+                          }}
+                        >
+                          -
+                        </button>
+                        <span>{buyQuantity}</span>
+                        <button
+                          className="plus"
+                          onClick={() => {
+                            setBuyQuantity(buyQuantity + 1);
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </td>
 
-                        <td data-label="Price">
-                          <p>
-                            ${" "}
-                            {item.SalesPrice ? item.SalesPrice.toFixed(2) : 0.0}
-                          </p>
-                        </td>
+                    <td data-label="Price">
+                      <p>₹ {product.price ? product.price.toFixed(2) : 0.0}</p>
+                    </td>
 
-                        <td>
-                          <p>$ {(item.SalesPrice * buyQuantity).toFixed(2)}</p>
-                        </td>
+                    <td>
+                      <p>₹ {(product.price * buyQuantity).toFixed(2)}</p>
+                    </td>
 
-                        {/* <td
+                    {/* <td
                               data-label="Remove"
                             >
                               <div className='delbtn'
@@ -616,42 +491,42 @@ const BuyPage = () => {
 
                               </div>
                             </td> */}
-                      </tr>
-                    );
-                  })}
+                  </tr>
+                  {/* );
+                  })} */}
 
                   <tr>
                     <td></td>
                     <td></td>
                     <td className="totaltableleft">Sub-Total</td>
-                    <td className="totaltableright">$ {subtotal.toFixed(2)}</td>
+                    <td className="totaltableright">₹ {subtotal.toFixed(2)}</td>
                   </tr>
                   <tr>
                     <td></td>
                     <td></td>
                     <td className="totaltableleft">Shipping</td>
-                    <td className="totaltableright">$ {shipping.toFixed(2)}</td>
+                    <td className="totaltableright">₹ {shipping.toFixed(2)}</td>
                   </tr>
                   <tr>
                     <td></td>
                     <td></td>
                     <td className="totaltableleft">Total</td>
                     <td className="totaltableright">
-                      $ {(subtotal + shipping).toFixed(2)}
+                      ₹ {(subtotal + shipping).toFixed(2)}
                     </td>
                   </tr>
                   <tr>
                     <td></td>
                     <td></td>
                     <td className="totaltableleft">Tax</td>
-                    <td className="totaltableright">$ {tax.toFixed(2)}</td>
+                    <td className="totaltableright">₹ {tax.toFixed(2)}</td>
                   </tr>
                   <tr>
                     <td></td>
                     <td></td>
                     <td className="totaltableleft">Net-Total</td>
                     <td className="totaltableright">
-                      $ {(tax + subtotal + shipping).toFixed(2)}
+                      ₹ {(tax + subtotal + shipping).toFixed(2)}
                     </td>
                   </tr>
                 </tbody>
@@ -702,15 +577,15 @@ const BuyPage = () => {
                 savedaddress.map((item, index) => {
                   return (
                     <div className="radio" key={index}>
-                      <input type="radio" name="address" id={index} />
+                      <input type="radio" name="address" id={index} onClick={()=>{setOrderAddressId(item.address_id)}} />
                       <span>
-                        {item.AddressLine1 +
-                          ", " +
-                          item.AddressLine2 +
-                          ", " +
-                          item.AddressLine3 +
-                          ", " +
-                          item.postalcode}
+                        {item.street1!=null && item.street1} 
+                          ,  
+                          {item.street2!=null && item.street2} 
+                          ,  
+                          {item.city!=null && item.city} 
+                          ,  
+                          {item.zipcode!=null && item.zipcode}
                       </span>
                     </div>
                   );
@@ -723,11 +598,35 @@ const BuyPage = () => {
             </div>
             <h3>OR</h3>
             <div className="shippingadd">
-              <input type="text" placeholder="Address Line 1" />
-              <input type="text" placeholder="Address Line 2" />
-              <input type="text" placeholder="Address Line 3" />
-              <input type="text" placeholder="Postal Code" />
-              <button>Save</button>
+              <input
+                type="text"
+                placeholder="Street-1"
+                onChange={(e) => {
+                  setStreet1(e.target.value);
+                }}
+              />
+              <input
+                type="text"
+                placeholder="Street-2"
+                onChange={(e) => {
+                  setStreet2(e.target.value);
+                }}
+              />
+              <input
+                type="text"
+                placeholder="City"
+                onChange={(e) => {
+                  setCity(e.target.value);
+                }}
+              />
+              <input
+                type="number"
+                placeholder="Postal Code"
+                onChange={(e) => {
+                  setZip(e.target.value);
+                }}
+              />
+              <button onClick={()=>{saveAddress()}}>Save</button>
             </div>
           </div>
         )}
@@ -768,7 +667,7 @@ const BuyPage = () => {
             <div className="c2">
               <span>Net Total</span>
               &nbsp;&nbsp;
-              <span>$ {(subtotal + tax + shipping).toFixed(2)}</span>
+              <span>₹ {(subtotal + tax + shipping).toFixed(2)}</span>
             </div>
           </div>
         )}
@@ -796,12 +695,13 @@ const BuyPage = () => {
         )}
 
         {/* CART BUTTONS */}
-        {active == 1 && cartdata.length > 0 && (
+        {active == 1 &&  (
           <div className="btns">
             <button
               className="nextbtn"
               onClick={() => {
-                checklogin() && setactive(2);
+                checklogin() && setactive(2) ;
+                getSavedAddress();
               }}
             >
               Next
@@ -823,6 +723,7 @@ const BuyPage = () => {
               className="nextbtn"
               onClick={() => {
                 checklogin() && setactive(3);
+                checkAddressSelected();
               }}
             >
               Next
@@ -836,6 +737,7 @@ const BuyPage = () => {
               className="backbtn"
               onClick={() => {
                 checklogin() && setactive(2);
+                setOrderAddressId(-1);
               }}
             >
               Back
@@ -843,7 +745,8 @@ const BuyPage = () => {
             <button
               className="nextbtn"
               onClick={() => {
-                checklogin() && setactive(4);
+                checklogin() && sendOrder() ;
+                // sendOrder()
               }}
             >
               Next

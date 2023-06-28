@@ -2,8 +2,8 @@ import React from 'react'
 import './CategorySidebar.css'
 
 const CategorySidebar = ({categories,searchCategory}) => {
-    const search = (category) =>{
-        searchCategory(category)
+    const search = (category_id) =>{
+        searchCategory(category_id);
     }
     return (
         <div className='categorysidebar'>
@@ -11,8 +11,7 @@ const CategorySidebar = ({categories,searchCategory}) => {
             {
                 categories.map((item) => {
                     return (
-                        <div className='category' onClick={()=>{search(item.category_name)}}>
-                            {/* <img src={item.categoryimage} alt='categoryimage' /> */}
+                        <div className='category' onClick={()=>{search(item.category_id)}}>
                             <h3>{item.category_name}</h3>
                         </div>
                     )

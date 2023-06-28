@@ -3,7 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Navbar from "../../COMPONENTS/Navbar/Navbar";
 import "./CartContainer.css";
 import "./Cart.css";
-import { Pagination } from "react-bootstrap";
 import { PaginationControl } from "react-bootstrap-pagination-control";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";

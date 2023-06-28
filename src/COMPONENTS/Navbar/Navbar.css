@@ -27,6 +27,7 @@ nav .s1 {
 
 nav img {
     width: 100px;
+    cursor: pointer;
 }
 
 nav .searchbar {

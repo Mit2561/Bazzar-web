@@ -24,6 +24,7 @@ import BuyPage from "./PAGES/ProductPurchase/BuyPage";
 import { useCookies } from "react-cookie";
 import { OrderPage } from "./PAGES/Order/OrderPage";
 import { SingleOrder } from "./PAGES/Order/SingleOrder";
+import { SearchProductsPage } from "./PAGES/Product/SearchProductsPage";
 export const Context = createContext({ token: null, addToken: () => {} });
 const App = () => {
   const [token, setToken] = useState(123);
@@ -39,7 +40,8 @@ const App = () => {
         {/* <Route path="/" element={token!==null ? <Home /> : <Navigate to="/login"/>} /> */}
         {/* <Route path="/home" element={token!==null ? <Home /> : <Login/>} /> */}
         { <Route path="/home" element={<Home /> } />}
-        <Route path="/product/:prodid" element={token!==null ? <ProductPage /> : <Login/>} />
+        <Route path="/product/:prodid" element={<ProductPage /> } />
+        <Route path="/products/:filter" element={<SearchProductsPage />} />
         <Route path="/order/:orderid" element={token!==null ? <SingleOrder /> : <Login/>} />
         <Route path="/myOrders" element={token!==null ? <OrderPage /> : <Login/>} />
         <Route path="/about" element={<About />} />
@@ -52,7 +54,7 @@ const App = () => {
         <Route path="/FAQ" element={<FAQ />} />
         <Route path="/termsandconditions" element={<Termsandconditions />} />
         <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-        <Route path="/Buy/:prodid/:quantity" element={token!==null ? <BuyPage /> : <Login/>} />
+        <Route path="/Buy/:prodid/:quantity" element={ <BuyPage /> } />
 
         <Route
           path="*"

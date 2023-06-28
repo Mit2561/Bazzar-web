@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SingleBanner from "../../COMPONENTS/Banners/SingleBanner";
 import Footer1 from "../../COMPONENTS/Footer/Footer1";
-import Footer2 from "../../COMPONENTS/Footer/Footer";
+import Footer from "../../COMPONENTS/Footer/Footer";
 import Navbar from "../../COMPONENTS/Navbar/Navbar";
 import "./Cart.css";
 import "./Progress.css";
@@ -12,6 +12,7 @@ import "./OrderSucessfull.css";
 import { useRecoilState } from "recoil";
 import { orderSuccessfulProvider } from "../../Providers/OrderSuccessfulProvider";
 import OrderSuccessful from "../../COMPONENTS/Order/OrderSuccessful";
+import poster from "../../ASSETS/poster.jpg"
 const Cart = () => {
   const [cartdata, setcartdata] = React.useState([]);
   const [subtotal, setsubtotal] = React.useState(0);
@@ -23,11 +24,17 @@ const Cart = () => {
       .toISOString()
       .split("T")[0]
   );
+  const [savedaddress,setSavedaddress] = useState([]);
+  const [street1, setStreet1] = useState();
+  const [street2, setStreet2] = useState();
+  const [city, setCity] = useState();
+  const [zip, setZip] = useState();
+  const [orderAddressId,setOrderAddressId] = useState(-1);
+
 
   const getcartitemsfromlocalstorage = () => {
     let cart = JSON.parse(localStorage.getItem("cart"));
     if (cart) {
-      console.log(cart);
       setcartdata(cart);
 
       let tempsubtotal = 0;
@@ -121,20 +128,117 @@ const Cart = () => {
     getcartitemsfromlocalstorage();
   };
 
-  const savedaddress = [
-    {
-      AddressLine1: "Address Line 1",
-      AddressLine2: "Address Line 2",
-      AddressLine3: "Address Line 3",
-      postalcode: "123456",
-    },
-    {
-      AddressLine1: "Address Line 1",
-      AddressLine2: "Address Line 2",
-      AddressLine3: "Address Line 3",
-      postalcode: "123456",
-    },
-  ];
+  const getSavedAddress = () => {
+    console.log("called address");
+    fetchSavedAddress();
+  } 
+  
+  const fetchSavedAddress = async() =>{
+    try {
+      const response = await fetch(`/api/address`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          client_id: 1,
+        },
+      });
+      const data = await response.json();
+      console.log(data);
+      setSavedaddress(data.address);
+      if(data.success===true){
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const checkAddressSelected = ()=>{
+    if(orderAddressId===-1){
+      alert("Please Select Deliver address");
+      setactive(2);
+    }
+    else{
+      setactive(3);
+    }
+  }
+
+  const postAddress = async (street1,street2,city,zip) => {
+    try {
+      const response = await fetch("/api/address/new", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          client_id: 1,
+        },
+        body: JSON.stringify({
+          street1: street1,
+          street2: street2,
+          city: city,
+          zipcode: zip,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("failed to upload your Address");
+      }
+      const data = await response.json();
+      console.log(data);
+      console.log("Address uploaded:", data.success);
+      if (data.success === true) {
+        // let currentAddress = savedaddress;
+        // currentAddress.push()
+      }
+    } catch (error) {
+      console.error("Error upload address:", error);
+    }
+  };
+  const saveAddress = () => {
+    postAddress(street1,street2,city,zip);
+  };
+
+
+  const postOrder = async() => {
+    let orderProducts = {};
+    cartdata.forEach((item)=>{
+      orderProducts[item.product_id]=item.quantity;
+    })
+    try {
+      const response = await fetch("/api/order/new", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          client_id: 1,
+        },
+        body: JSON.stringify({
+          address_id:orderAddressId,
+          shipping_price:shipping,
+          orderProducts:orderProducts
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("failed to upload Order data");
+      }
+      const data = await response.json();
+      console.log("Data uploaded:", data.success);
+      console.log(data);
+      if (data.success === true) {
+        setactive(4);
+      }
+      else{
+        alert("Error while Ordering please retry..");
+      }
+    } catch (error) {
+      alert("Error while Ordering please retry..");
+      console.error("Error, while ordering:", error);
+    }
+  }
+  const sendOrder = () => {
+    postOrder();
+    console.log("order Successfull");
+  }
 
   const [selectedorderid, setselectedorderid] = useState(0);
   const [ordersuccesscont, setordersuccesscont] = useRecoilState(
@@ -146,13 +250,13 @@ const Cart = () => {
       {ordersuccesscont && (
         <OrderSuccessful
           orderid={selectedorderid}
-          message={`Order Placed Successfully, Order ID: ${selectedorderid}`}
+          message={`Order Placed Successfully, Order ID: ₹{selectedorderid}`}
           redirecto="userorders"
         />
       )}
       <SingleBanner
         heading="My Cart"
-        bannerimage="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
+        bannerimage={poster}
       />
       <div className="cart">
         <div className="progress">
@@ -269,6 +373,7 @@ const Cart = () => {
               className="c11"
               onClick={() => {
                 cartdata.length > 0 && checklogin() && setactive(3);
+                checkAddressSelected();
               }}
             >
               <svg
@@ -293,6 +398,7 @@ const Cart = () => {
               className="c1"
               onClick={() => {
                 cartdata.length > 0 && checklogin() && setactive(3);
+                checkAddressSelected();
               }}
             >
               <svg
@@ -386,11 +492,11 @@ const Cart = () => {
                           <div
                             className="cartproduct"
                             onClick={() => {
-                              window.location.href = `/product/${item.product_id}`;
+                              window.location.href = `/product/₹{item.product_id}`;
                             }}
                           >
                             <img
-                              src={`https://res.cloudinary.com/dqzedyrjd/image/upload/${item.images}.jpg`}
+                              src={`https://res.cloudinary.com/dqzedyrjd/image/upload/₹{item.images}.jpg`}
                               alt={item.product_name}
                             />
                             <p>{item.product_name}</p>
@@ -437,11 +543,11 @@ const Cart = () => {
                         </td>
 
                         <td data-label="Price">
-                          <p>$ {item.price ? item.price.toFixed(2) : 0.0}</p>
+                          <p>₹ {item.price ? item.price.toFixed(2) : 0.0}</p>
                         </td>
 
                         <td>
-                          <p>$ {(item.price * item.quantity).toFixed(2)}</p>
+                          <p>₹ {(item.price * item.quantity).toFixed(2)}</p>
                         </td>
 
                         <td data-label="Remove">
@@ -475,34 +581,34 @@ const Cart = () => {
                     <td></td>
                     <td></td>
                     <td className="totaltableleft">Sub-Total</td>
-                    <td className="totaltableright">$ {subtotal.toFixed(2)}</td>
+                    <td className="totaltableright">₹ {subtotal.toFixed(2)}</td>
                   </tr>
                   <tr>
                     <td></td>
                     <td></td>
                     <td className="totaltableleft">Shipping</td>
-                    <td className="totaltableright">$ {shipping.toFixed(2)}</td>
+                    <td className="totaltableright">₹ {shipping.toFixed(2)}</td>
                   </tr>
                   <tr>
                     <td></td>
                     <td></td>
                     <td className="totaltableleft">Total</td>
                     <td className="totaltableright">
-                      $ {(subtotal + shipping).toFixed(2)}
+                      ₹ {(subtotal + shipping).toFixed(2)}
                     </td>
                   </tr>
                   <tr>
                     <td></td>
                     <td></td>
                     <td className="totaltableleft">Tax</td>
-                    <td className="totaltableright">$ {tax.toFixed(2)}</td>
+                    <td className="totaltableright">₹ {tax.toFixed(2)}</td>
                   </tr>
                   <tr>
                     <td></td>
                     <td></td>
                     <td className="totaltableleft">Net-Total</td>
                     <td className="totaltableright">
-                      $ {(tax + subtotal + shipping).toFixed(2)}
+                      ₹ {(tax + subtotal + shipping).toFixed(2)}
                     </td>
                   </tr>
                 </tbody>
@@ -553,15 +659,15 @@ const Cart = () => {
                 savedaddress.map((item, index) => {
                   return (
                     <div className="radio" key={index}>
-                      <input type="radio" name="address" id={index} />
+                      <input type="radio" name="address" id={index} onClick={()=>{setOrderAddressId(item.address_id)}} />
                       <span>
-                        {item.AddressLine1 +
-                          ", " +
-                          item.AddressLine2 +
-                          ", " +
-                          item.AddressLine3 +
-                          ", " +
-                          item.postalcode}
+                        {item.street1!=null && item.street1} 
+                          ,  
+                          {item.street2!=null && item.street2} 
+                          ,  
+                          {item.city!=null && item.city} 
+                          ,  
+                          {item.zipcode!=null && item.zipcode}
                       </span>
                     </div>
                   );
@@ -574,11 +680,35 @@ const Cart = () => {
             </div>
             <h3>OR</h3>
             <div className="shippingadd">
-              <input type="text" placeholder="Address Line 1" />
-              <input type="text" placeholder="Address Line 2" />
-              <input type="text" placeholder="Address Line 3" />
-              <input type="text" placeholder="Postal Code" />
-              <button>Save</button>
+              <input
+                type="text"
+                placeholder="Street-1"
+                onChange={(e) => {
+                  setStreet1(e.target.value);
+                }}
+              />
+              <input
+                type="text"
+                placeholder="Street-2"
+                onChange={(e) => {
+                  setStreet2(e.target.value);
+                }}
+              />
+              <input
+                type="text"
+                placeholder="City"
+                onChange={(e) => {
+                  setCity(e.target.value);
+                }}
+              />
+              <input
+                type="number"
+                placeholder="Postal Code"
+                onChange={(e) => {
+                  setZip(e.target.value);
+                }}
+              />
+              <button onClick={()=>{saveAddress()}}>Save</button>
             </div>
           </div>
         )}
@@ -619,7 +749,7 @@ const Cart = () => {
             <div className="c2">
               <span>Net Total</span>
               &nbsp;&nbsp;
-              <span>$ {(subtotal + tax + shipping).toFixed(2)}</span>
+              <span>₹ {(subtotal + tax + shipping).toFixed(2)}</span>
             </div>
           </div>
         )}
@@ -647,12 +777,13 @@ const Cart = () => {
         )}
 
         {/* CART BUTTONS */}
-        {active == 1 && cartdata.length > 0 && (
+        {active == 1 &&  (
           <div className="btns">
             <button
               className="nextbtn"
               onClick={() => {
-                checklogin() && setactive(2);
+                checklogin() && setactive(2) ;
+                getSavedAddress();
               }}
             >
               Next
@@ -674,6 +805,7 @@ const Cart = () => {
               className="nextbtn"
               onClick={() => {
                 checklogin() && setactive(3);
+                checkAddressSelected();
               }}
             >
               Next
@@ -687,6 +819,7 @@ const Cart = () => {
               className="backbtn"
               onClick={() => {
                 checklogin() && setactive(2);
+                setOrderAddressId(-1);
               }}
             >
               Back
@@ -694,7 +827,7 @@ const Cart = () => {
             <button
               className="nextbtn"
               onClick={() => {
-                checklogin() && setactive(4);
+                checklogin() && sendOrder() ;
               }}
             >
               Next
@@ -721,7 +854,7 @@ const Cart = () => {
         )}
       </div>
       <Footer1 />
-      <Footer2 />
+      <Footer />
     </div>
   );
 };

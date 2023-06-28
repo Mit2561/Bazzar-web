@@ -27,7 +27,7 @@ const Navbar = ({ reloadnavbar, searchProduct }) => {
 
   useEffect(() => {
     getcarttotalitems();
-  }, [reloadnavbar]);
+  }, []);
 
   const search = () => {
     searchProduct(searchItem);
@@ -66,6 +66,7 @@ const Navbar = ({ reloadnavbar, searchProduct }) => {
             src={require("../../ASSETS/icon_150.png")}
             alt="logo"
             className="logo"
+            onClick={()=>{search("")}}
           />
         </Link>
 

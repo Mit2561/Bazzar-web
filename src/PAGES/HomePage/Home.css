@@ -1,14 +1,17 @@
-.product_sidebar {
+.productscont {
     display: flex;
     width: 100%;
     justify-content: space-between;
     padding: 0px 20px;
     margin-top: 16px;
 }
+.paginationCont {
+    margin-top: 32px;
+}
 
 
 @media (max-width: 650px) {
-    .product_sidebar {
+    .productscont {
         flex-direction: column;
         justify-content: center;
         align-items: center;

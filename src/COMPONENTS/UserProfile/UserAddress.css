@@ -34,7 +34,7 @@
 }
 
 .addressin .address .delbtn {
-    background-color: var(--col1);
+    background-color: red;
     color: white;
     border: none;
     border-radius: 50%;
@@ -43,7 +43,7 @@
     height: 40px;
     position: absolute;
     right: -2px;
-    top: -10px;
+    bottom: 2px;
     cursor: pointer;
 }
 

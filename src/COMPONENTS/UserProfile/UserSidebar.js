@@ -52,7 +52,7 @@ const UserSidebar = ({ activepage }) => {
           </Link>
       }
 
-      {
+      {/* {
         activepage === 'yourorders' ?
           <div className='s2'>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -72,7 +72,7 @@ const UserSidebar = ({ activepage }) => {
               <span>Your Orders</span>
             </div>
           </Link>
-      }
+      } */}
 
       {
         activepage === 'address' ?
